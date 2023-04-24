@@ -1,11 +1,11 @@
 const WebSocket = require('ws');
 const axios = require('axios');
 
-// OpenAI API ÈÏÖ¤ÐÅÏ¢
+// OpenAI API ï¿½ï¿½Ö¤ï¿½ï¿½Ï¢
 const apiKey = 'sk-8BUpQWyrv5zvndZS9s8ZT3BlbkFJO0AR5Z2xeTCrazyThursDayviVo50';
 const apiEndpoint = 'https://api.openai.com/v1/chat/completions';
 
-// ´´½¨WebSocket·þÎñÆ÷
+// ï¿½ï¿½ï¿½ï¿½WebSocketï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 const server = new WebSocket.Server({ port: 8989 });
 
 server.on('connection', (socket) => {
@@ -16,32 +16,32 @@ server.on('connection', (socket) => {
         console.log(messages)
         try {
 
-            // ÉèÖÃÇëÇó²ÎÊý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             const options = {
-                url: 'https://api.gptbot.cc/v1',
+                url: apiEndpoint,
                 method: 'POST',
-headers: {
-    'Content-Type': 'application/json',
-    'Authorization': apiKey 
-},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': apiKey
+                },
                 data: {
                     model: 'gpt-3.5-turbo',
                     stream: true,
                     messages: messages
                 },
-                responseType: 'stream' // ÉèÖÃÏìÓ¦ÀàÐÍÎªÁ÷
+                responseType: 'stream' // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
             };
 
-            // ·¢ËÍÇëÇó²¢´¦ÀíÏìÓ¦
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó²¢´ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦
             axios(options)
                 .then(response => {
                     console.log('Response downloaded successfully.');
 
-                    let data = ''; // ±£´æÏìÓ¦Êý¾ÝµÄ±äÁ¿
+                    let data = ''; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ÝµÄ±ï¿½ï¿½ï¿½
 
                     response.data.on('data', (chunk) => {
-                         data += chunk.toString('utf-8'); // ½«Ã¿¸ö¿é¸½¼Óµ½ÏìÓ¦×Ö·û´®ÖÐ
-                        // ½«ÏìÓ¦Êý¾Ý·¢ËÍ»Ø¿Í»§¶Ë
+                        data += chunk.toString('utf-8'); // ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½é¸½ï¿½Óµï¿½ï¿½ï¿½Ó¦ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
+                        // ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý·ï¿½ï¿½Í»Ø¿Í»ï¿½ï¿½ï¿½
                         const responseTextRepace = data.replace(/^\s*$(?:\r\n?|\n)/gm, '@').replace(/[DONE]/g, '').replace(/data:/g, '').slice(0, -1).replace(/[DONE]/g, '');
                         const responseTextRepaceArr = responseTextRepace.split('@');
                         let content = '';
@@ -51,12 +51,12 @@ headers: {
                                 content = content + JSON.parse(item).choices[0].delta.content;
                             }
                         });
-                        socket.send(content); 
+                        socket.send(content);
 
                     });
 
                     response.data.on('end', () => {
-                        console.log(data); // Êä³öÏìÓ¦×Ö·û´®
+                        console.log(data); // ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ö·ï¿½ï¿½ï¿½
                         socket.close();
                     });
                 })
